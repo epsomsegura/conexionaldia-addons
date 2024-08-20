@@ -1,0 +1,21 @@
+{
+    "name": "epsomsegura/conexionaldia-addons",
+    "description": "This is a special addons manager plugin for conexionaldia.com website to manage and show special addon images easily.",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Epsomsegura\\ConexionaldiaAddons\\": "src/"
+        },
+        "files": [
+            "src/App/helpers.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "epsomsegura",
+            "email": "segurajaramilloepsom@gmail.com"
+        }
+    ],
+    "require": {}
+}
