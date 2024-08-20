@@ -1,0 +1,21 @@
+.card{
+    max-width: 100% !important;
+}
+
+.modal{
+    z-index: 10000 !important;
+}
+.swal2-container{
+    z-index: 10001 !important;
+}
+
+.tooltip.show {
+    z-index: 10002;
+}
+
+.tooltip.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before,
+.tooltip.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before,
+.tooltip.bs-tooltip-auto[data-popper-placement^="bottom"] .tooltip-arrow::before,
+.tooltip.bs-tooltip-auto[data-popper-placement^="left"] .tooltip-arrow::before {
+    z-index: 10003; 
+}
