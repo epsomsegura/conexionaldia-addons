@@ -534,10 +534,10 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                     })
                     .then(response => response.json())
                     .then((data) => {
-                        this.getAddons();
                         let modal = document.querySelector('[data-bs-dismiss="modal"]').click();
-                        this.addon = this.prepareAddon(null);
                         this.showAlert("success", "¡Excelente!", "El anuncio ha sido guardado exitosamente");
+                        this.getAddons();
+                        this.addon = this.prepareAddon(null);
                     })
                     .catch((error) => {
                         this.showAlert("error", "Error", error);

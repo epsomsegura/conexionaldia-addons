@@ -38,16 +38,16 @@ class Addon extends DomainModel
     public function create_schema()
     {
         global $wpdb;
-        $query = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}conexionaldia_addons (
-            `id` INT NOT NULL AUTO_INCREMENT,
-            `start_date` TIMESTAMP NULL,
-            `end_date` TIMESTAMP NULL,
-            `status` TINYINT(1) DEFAULT 1,
-            `payload` LONGTEXT,
-            `created_at` TIMESTAMP NULL,
-            `updated_at` TIMESTAMP NULL,
-            PRIMARY KEY(`id`))";
-
+        $table = $wpdb->prefix."conexionaldia_addons";
+        $query = "CREATE TABLE IF NOT EXISTS ".$table." (
+            id INT NOT NULL AUTO_INCREMENT,
+            start_date TIMESTAMP NULL,
+            end_date TIMESTAMP NULL,
+            status TINYINT(1) DEFAULT 1,
+            payload LONGTEXT,
+            created_at TIMESTAMP NULL,
+            updated_at TIMESTAMP NULL,
+            PRIMARY KEY(id));";
         $wpdb->query($query);
     }
 

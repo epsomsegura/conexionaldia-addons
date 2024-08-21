@@ -21,6 +21,10 @@ class Base64ToImage
         $image_data = base64_decode($base64_data);
         $file_name = uniqid() . '.' . $file_extension;
         $upload_dir = wp_upload_dir();
+        $directory=$file_path = $upload_dir['path'] . "/conexionaldia_addons/";
+        if(!file_exists($directory)){
+            wp_mkdir_p($directory);
+        }
         $file_path = $upload_dir['path'] . "/conexionaldia_addons/"  . $file_name;
         file_put_contents($file_path, $image_data);
         return $upload_dir['url'] . "/conexionaldia_addons/"  . $file_name;
