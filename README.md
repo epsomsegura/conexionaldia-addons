@@ -1,6 +1,6 @@
 # Conexion al día - Addons
 
-This is an adhoc plugin created to manage specific addons for the [https://conexionaldia.com](https://conexionaldia.com) WordPress website The website uses a custom theme and updating certain features is not allowed, making this plugun necessary to implement the required funcionality.
+This is an adhoc plugin created to manage specific addons for the [https://conexionaldia.com](https://conexionaldia.com) WordPress website. The website uses a custom theme and updating certain features is not allowed, making this plugun necessary to implement the required funcionality.
 
 ## Mínimun requirements
 - PHP Version **7.4**+

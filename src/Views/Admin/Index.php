@@ -1,5 +1,65 @@
+<style>
+    #loader-container {
+        top: 0px;
+        left: 0px;
+        z-index: 10010;
+        position: fixed;
+        background-color: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(0.5);
+        display: flex;
+    }
+
+    .loader {
+        --s: 15px;
+        width: calc(var(--s)*2.33);
+        aspect-ratio: 1;
+        display: flex;
+        justify-content: space-between;
+        animation: l29-0 1s infinite;
+    }
+
+    .loader::before,
+    .loader::after {
+        content: "";
+        width: var(--s);
+        --_g: no-repeat radial-gradient(farthest-side, #000 94%, #0000);
+        background:
+            var(--_g) top,
+            var(--_g) bottom;
+        background-size: 100% var(--s);
+        transform-origin: 50% calc(100% - var(--s)/2);
+        animation: inherit;
+        animation-name: l29-1;
+    }
+
+    .loader::after {
+        --_s: -1;
+    }
+
+    @keyframes l29-0 {
+        100% {
+            transform: translateY(calc(var(--s) - 100%))
+        }
+    }
+
+    @keyframes l29-1 {
+        100% {
+            transform: rotate(calc(var(--_s, 1)*-180deg))
+        }
+    }
+</style>
+
+<div id="loader-container" class="vw-100 vh-100">
+    <div class="p-2 m-auto text-center">
+        <div class="mb-2 text-center">
+            <div class="loader"></div>
+        </div>
+        <strong>Cargando</strong>
+    </div>
+</div>
+
+
 <?php
-// URL del archivo
 $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
 ?>
 
@@ -43,9 +103,9 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                     <tr>
                         <th>ID</th>
                         <th>Estatus</th>
-                        <th class="text-nowrap">Fecha de carga</th>
+                        <th class="text-nowrap">Fecha de registro</th>
                         <th class="text-nowrap">Fecha de inicio</th>
-                        <th class="text-nowrap">Fecha de finalización</th>
+                        <th class="text-nowrap">Fecha de cierre</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -220,14 +280,17 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
             leftImagePreviewer: [],
             payloadTemplate: {
                 header: {
+                    base64: null,
                     url: null,
                     path: null
                 },
                 left: [{
+                    base64: null,
                     url: null,
                     path: null
                 }],
                 right: [{
+                    base64: null,
                     url: null,
                     path: null
                 }]
@@ -237,6 +300,7 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
             urlRegex: /^(https?:\/\/)?([\w\-]+(\.[\w\-]+)+)(\/[\w\-\/]*)?(\?[\w\-=&]*)?$/,
             init() {
                 this.getAddons();
+                this.loaderHide();
             },
             addLeftAddon() {
                 (this.addon.payload.left).push({
@@ -257,7 +321,31 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
             },
             createAddonModel() {
-                this.addon = this.prepareAddon(null);
+                this.addon = {
+                    id: null,
+                    start_date: null,
+                    end_date: null,
+                    status: true,
+                    payload: {
+                        header: {
+                            url: null,
+                            path: null,
+                            base64: null
+                        },
+                        left: [{
+                            url: null,
+                            path: null,
+                            base64: null
+                        }],
+                        right: [{
+                            url: null,
+                            path: null,
+                            base64: null
+                        }]
+                    },
+                    created_at: null,
+                    updated_at: null
+                };
             },
             deleteAddon(addon) {
                 Swal.fire({
@@ -270,6 +358,7 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
 
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        this.loaderShow();
                         let uri = this.baseUrl + "delete/" + addon.id;
                         fetch(uri, {
                                 method: "DELETE",
@@ -284,8 +373,10 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                                     Swal.fire("Anuncio eliminado", "", "success");
                                     this.getAddons();
                                 }
+                                this.loaderHide();
                             })
                             .catch((error) => {
+                                this.loaderHide();
                                 this.showAlert("error", "Error", error);
                             });
                     }
@@ -295,6 +386,7 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                 return (this.formValidationPeriod() && this.formValidationHeader() && this.formValidationLeft() && this.formValidationRight());
             },
             findById(id) {
+                this.loaderShow();
                 let uri = this.baseUrl + "find/" + id;
                 fetch(uri, {
                         method: "GET",
@@ -307,8 +399,10 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                     .then((addon) => {
                         this.addon = this.prepareAddon(addon);
                         this.addTooltips();
+                        this.loaderHide();
                     })
                     .catch((error) => {
+                        this.loaderHide();
                         this.showAlert("error", "Error", error);
                     });
             },
@@ -355,6 +449,7 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                 return valid;
             },
             getAddons() {
+                this.loaderShow();
                 let uri = this.baseUrl + "index?perPage=" + this.addonsPagination.per_page + "&page=" + this.addonsPagination.current_page;
                 fetch(uri, {
                         method: "GET",
@@ -367,8 +462,10 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                     .then((data) => {
                         this.addonsPagination = data;
                         this.addTooltips();
+                        this.loaderHide();
                     })
                     .catch((error) => {
+                        this.loaderHide();
                         this.showAlert("error", "Error", error);
                     });
             },
@@ -381,7 +478,16 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                 }
             },
             isValidUrl(url) {
+                if (url == undefined || url == null || url == "") {
+                    return false;
+                }
                 return this.urlRegex.test(url);
+            },
+            loaderShow() {
+                document.querySelector("#loader-container").style.display = "flex";
+            },
+            loaderHide() {
+                document.querySelector("#loader-container").style.display = "none";
             },
             nextPage() {
                 if (this.addonsPagination.current_page <= this.addonsPagination.pages) {
@@ -417,6 +523,7 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                 };
             },
             previewAddon(event, section, index = null) {
+                this.loaderShow();
                 let
                     file = event.target.files[0],
                     specificWidth = parseInt(event.target.dataset['specificWidth']),
@@ -437,9 +544,10 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                             break;
                     }
                     event.target.value = "";
+                    this.loaderHide();
                 } else {
-                    let acceptedMimes = ["image/png","image/jpg","image/jpeg","image/gif","image/svg+xml"];
-                    if(acceptedMimes.indexOf(file.type) !== -1){
+                    let acceptedMimes = ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/svg+xml"];
+                    if (acceptedMimes.indexOf(file.type) !== -1) {
                         let fileReader = new FileReader();
                         fileReader.onload = (evt) => {
                             let img = new Image();
@@ -477,11 +585,11 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                             };
                         };
                         fileReader.readAsDataURL(file);
-                    }
-                    else{
+                    } else {
                         this.showAlert("warning", "¡Atención!", `El archivo cargado no corresponde a los permitidos para formato de imagen <i>(.png, .jpg, .jpeg, .gif o .svg)</i>.`);
                         event.target.value = "";
                     }
+                    this.loaderHide();
                 }
             },
             previewPage() {
@@ -508,6 +616,7 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                 });
             },
             submitForm() {
+                this.loaderShow();
                 let uri = this.baseUrl + "create";
                 let method = "POST";
                 if (this.addon.id == null || this.addon.id == "") {
@@ -537,12 +646,13 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
                         let modal = document.querySelector('[data-bs-dismiss="modal"]').click();
                         this.showAlert("success", "¡Excelente!", "El anuncio ha sido guardado exitosamente");
                         this.getAddons();
-                        this.addon = this.prepareAddon(null);
+                        this.loaderHide();
                     })
                     .catch((error) => {
                         this.showAlert("error", "Error", error);
+                        this.loaderHide();
                     });
-            }
+            },
         }
     }
 </script>
