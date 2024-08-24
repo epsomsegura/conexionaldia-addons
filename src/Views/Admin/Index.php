@@ -299,8 +299,8 @@ $file_url = plugins_url('../../../docs/userguide.pdf', __FILE__);
             rightImagePreviewer: [],
             urlRegex: /^(https?:\/\/)?([\w\-]+(\.[\w\-]+)+)(\/[\w\-\/]*)?(\?[\w\-=&]*)?$/,
             init() {
-                this.getAddons();
                 this.loaderHide();
+                this.getAddons();
             },
             addLeftAddon() {
                 (this.addon.payload.left).push({
